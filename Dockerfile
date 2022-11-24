@@ -1,7 +1,7 @@
 FROM golang:1.19.2 AS BUILD_IMAGE
 WORKDIR /app
 COPY . ./
-RUN go build -o /server
+RUN go build -buildvcs=false -o /server
 
 FROM gcr.io/distroless/base-debian10
 WORKDIR /
