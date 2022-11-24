@@ -12,9 +12,6 @@ pipeline {
     }
 
     stages {
-        checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/rbsilmann/api-whatsup']]])
-        
-        
         stage('build') {
             steps {
                 script {
