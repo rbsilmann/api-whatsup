@@ -1,34 +1,43 @@
 #!groovy
-pipeline{
+pipeline {
     agent any
-    options{
+    options {
         buildDiscarder(logRotator(numToKeepStr: '5', daysToKeepStr: '5'))
         timestamps()
     }
 
-    environment{
+    environment {
         REGISTRY = "rbsilmann/api-whatsup"
         REGISTRY_CREDENTIALS=credentials('dockerhub')
     }
 
-    stages{
+    stages {
+        stage('git') {
+            checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/rbsilmann/api-whatsup']]])
+        }
         
-        stage('build'){
-            steps{
-                script{
+        stage('build') {
+            steps {
+                script {
                     DOCKER_IMAGE = docker.build REGISTRY + ":$BUILD_NUMBER"
                 }
             }
         }
 
-        stage('push'){
+        stage('push') {
             steps{
                 script{
-                    docker.withDockerRegistry('', REGISTRY_CREDENTIALS){
+                    docker.withDockerRegistry('', REGISTRY_CREDENTIALS) {
                         DOCKER_IMAGE.push()
                     }
                 }
             }
         }
+    }
+}
+
+post {
+    always {
+        cleanWs()
     }
 }
