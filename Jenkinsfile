@@ -14,14 +14,16 @@ pipeline {
     stages {
         stage('git') {
             steps{
-                git 'https://github.com/rbsilmann/api-whatsup.git'
+                git branch: 'main', url: 'https://github.com/rbsilmann/api-whatsup'
             }
         }
 
         stage('build') {
             steps {
                 script {
-                    DOCKER_IMAGE = docker.build REGISTRY + ":$BUILD_NUMBER"
+                    docker.withDockerServer([uri: 'tcp://172.17.0.1:4243']) {
+                        DOCKER_IMAGE = docker.build REGISTRY + ":$BUILD_NUMBER"
+                    }
                 }
             }
         }
@@ -29,8 +31,10 @@ pipeline {
         stage('push') {
             steps{
                 script{
-                    docker.withDockerRegistry('', REGISTRY_CREDENTIALS) {
-                        DOCKER_IMAGE.push()
+                    docker.withDockerServer([uri: 'tcp://172.17.0.1:4243']) {
+                        docker.withDockerRegistry('', REGISTRY_CREDENTIALS) {
+                            DOCKER_IMAGE.push()
+                        }
                     }
                 }
             }
