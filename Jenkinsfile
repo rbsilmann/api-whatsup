@@ -9,6 +9,7 @@ pipeline {
     environment {
         REGISTRY = "rbsilmann/api-whatsup"
         REGISTRY_CREDENTIALS=credentials('dockerhub')
+        USER_CREDENTIALS=credentials('jenkinsuser')
     }
 
     stages {
@@ -21,7 +22,7 @@ pipeline {
         stage('build') {
             steps {
                 script {
-                    docker.withDockerServer([uri: 'tcp://172.17.0.1:4243']) {
+                    docker.withDockerServer([uri: 'tcp://172.17.0.1:4243', credentialsId: USER_CREDENTIALS]) {
                         DOCKER_IMAGE = docker.build REGISTRY + ":$BUILD_NUMBER"
                     }
                 }
@@ -31,7 +32,7 @@ pipeline {
         stage('push') {
             steps{
                 script{
-                    docker.withDockerServer([uri: 'tcp://172.17.0.1:4243']) {
+                    docker.withDockerServer([uri: 'tcp://172.17.0.1:4243', credentialsId: USER_CREDENTIALS]) {
                         docker.withDockerRegistry('', REGISTRY_CREDENTIALS) {
                             DOCKER_IMAGE.push()
                         }
