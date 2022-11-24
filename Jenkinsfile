@@ -12,6 +12,12 @@ pipeline {
     }
 
     stages {
+        stage('git') {
+            steps{
+                git 'https://github.com/rbsilmann/api-whatsup.git'
+            }
+        }
+
         stage('build') {
             steps {
                 script {
