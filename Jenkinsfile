@@ -1,5 +1,5 @@
 pipeline {
-  agent docker
+  agent any
   environment {
     BRANCH = "${env.GIT_BRANCH}"
   }
@@ -12,10 +12,10 @@ pipeline {
         sh '''
           java -version
           echo $BRANCH
-          docker build -t rbsilmann/api-whatsup:$BRANCH
         '''
       }
     }
+    // docker build -t rbsilmann/api-whatsup:$BRANCH
     stage('cat README') {
       when {
         branch "fix-*"
