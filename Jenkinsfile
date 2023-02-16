@@ -1,5 +1,5 @@
 pipeline {
-  agent any
+  agent docker
   environment {
     BRANCH = "${env.GIT_BRANCH}"
   }
