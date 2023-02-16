@@ -12,6 +12,7 @@ pipeline {
         sh '''
           java -version
           echo $BRANCH
+          docker build -t rbsilmann/api-whatsup:$BRANCH
         '''
       }
     }
