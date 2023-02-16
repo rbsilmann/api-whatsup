@@ -25,18 +25,18 @@ pipeline {
         '''
       }
     }
-    stage('Build image') {
-      steps {
-        dockerImage = docker.build("rbsilmann/api-whatsup:${BRANCH}")
-      }
-    }
+    // stage('Build image') {
+    //   steps {
+    //     dockerImage = docker.build("rbsilmann/api-whatsup:${BRANCH}")
+    //   }
+    // }
     
-    stage('Push image') {
-      steps {
-        withDockerRegistry([ credentialsId: "regcred", url: "" ]) {
-          dockerImage.push()
-        }
-      }
-    }
+    // stage('Push image') {
+    //   steps {
+    //     withDockerRegistry([ credentialsId: "regcred", url: "" ]) {
+    //       dockerImage.push()
+    //     }
+    //   }
+    // }
   }
 }
