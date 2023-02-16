@@ -26,12 +26,16 @@ pipeline {
       }
     }
     stage('Build image') {
-      dockerImage = docker.build("rbsilmann/api-whatsup:${BRANCH}")
+      steps {
+        dockerImage = docker.build("rbsilmann/api-whatsup:${BRANCH}")
+      }
     }
     
     stage('Push image') {
-      withDockerRegistry([ credentialsId: "regcred", url: "" ]) {
-        dockerImage.push()
+      steps {
+        withDockerRegistry([ credentialsId: "regcred", url: "" ]) {
+          dockerImage.push()
+        }
       }
     }
   }
