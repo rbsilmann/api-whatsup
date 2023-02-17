@@ -10,15 +10,14 @@ pipeline {
     stage('Hello') {
       steps {
         sh '''
-          java -version
           echo $BRANCH
         '''
       }
     }
-    stage('Build') {
+    stage('Build image') {
       when {
-        // branch "fix-*"
         branch "main"
+        // branch "fix-*"
       }
       steps {
         script {
@@ -26,18 +25,14 @@ pipeline {
         }
       }
     }
-    // stage('Build image') {
-    //   steps {
-    //     dockerImage = docker.build("rbsilmann/api-whatsup:${BRANCH}")
-    //   }
-    // }
-    
-    // stage('Push image') {
-    //   steps {
-    //     withDockerRegistry([ credentialsId: "regcred", url: "" ]) {
-    //       dockerImage.push()
-    //     }
-    //   }
-    // }
+    stage('Push image') {
+      steps {
+        script {
+          docker.withDockerRegistry([ credentialsId: "regcred", url: "" ]) {
+            app.push()
+          }
+        }
+      }
+    }
   }
 }
