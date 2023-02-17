@@ -25,18 +25,18 @@ pipeline {
         }
       }
     }
-    stage('Push image') {
-      when {
-        branch "main"
-        // branch "fix-*"
-      }
-      steps {
-        script {
-          docker.withRegistry('https://registry-1.docker.io', 'regcred') {
-            app.push()
-          }
-        }
-      }
-    }
+    // stage('Push image') {
+    //   when {
+    //     branch "main"
+    //     // branch "fix-*"
+    //   }
+    //   steps {
+    //     script {
+    //       docker.withRegistry('https://registry-1.docker.io', 'regcred') {
+    //         app.push()
+    //       }
+    //     }
+    //   }
+    // }
   }
 }
