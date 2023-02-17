@@ -15,15 +15,14 @@ pipeline {
         '''
       }
     }
-    // docker build -t rbsilmann/api-whatsup:$BRANCH
-    stage('cat README') {
+    stage('Build') {
       when {
         branch "fix-*"
       }
       steps {
-        sh '''
-          cat README.md
-        '''
+        script {
+          app = docker.build("rbsilmann/api-whatsup:${BRANCH}")
+        }
       }
     }
     // stage('Build image') {
