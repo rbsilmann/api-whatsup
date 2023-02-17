@@ -25,14 +25,5 @@ pipeline {
         }
       }
     }
-    stage('Push image') {
-      steps {
-        script {
-          docker.withDockerRegistry([ credentialsId: "regcred", url: "" ]) {
-            app.push()
-          }
-        }
-      }
-    }
   }
 }
