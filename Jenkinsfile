@@ -17,8 +17,8 @@ pipeline {
     }
     stage('Build') {
       when {
-        // branch "fix-*"
-        branch "main"
+        branch "fix-*"
+        // branch "main"
       }
       steps {
         script {
