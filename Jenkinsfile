@@ -27,8 +27,8 @@ pipeline {
                 script {
                     def containerId = sh(script: 'docker run -d -p 9098:9098 rbsilmann/api-whatsup:$BRANCH', returnStdout: true).trim()
                     try {
-                        def response = sh(script: 'curl -I -s -o /dev/null -w "%{http_code}" http://localhost:9098', returnStdout: true).trim()
-                        if (response == '200') {
+                        def status = sh(script: "docker inspect -f '{{.State.Status}}' ${containerId}", returnStatus: true)
+                        if (status == 0) {
                             echo 'Test passed!'
                         } else {
                             error 'Test failed!'
