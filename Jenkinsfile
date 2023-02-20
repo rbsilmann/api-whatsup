@@ -53,16 +53,36 @@ pipeline {
       }
     }
   }
-  post {
-    always {
+  stage('Notify Slack') {
+    when {
+      expression {
+        return env.BRANCH_NAME.startsWith('main') || env.BRANCH_NAME.startsWith('FIS')
+      }
+    }
+    steps {
       script {
-        def slackChannel = '#alertmanager'
-        def slackToken = 'xoxe.xoxp-1-Mi0yLTQzOTQ5MTIzNTAzNzAtNDM5NDgwODM4NjExNS00ODMwMDA5OTUxMzYzLTQ4MjcxODk1NTc4MTMtMzQyMTYzMGJiZjA2MDg3MWFkOTFkMWNhNGRiZGVmMjc1MDY4YmYwZTIxYWUyMzhkNzEwNGU2MTI1ZWNkZmE0NA'
-        def slackUrl = "https://slack.com/api/chat.postMessage?token=${slackToken}&channel=${slackChannel}&text="
-        
-        if (env.SLACK_NOTIFY == 'true') {
-          sh "curl -X POST '${slackUrl}Pipeline completed for *${env.JOB_NAME}* branch *${env.BRANCH_NAME}* with status *${currentBuild.result}*'"
+        def color = ""
+        def status = currentBuild.currentResult
+        if (status == "SUCCESS") {
+          color = "#36a64f"
+        } else if (status == "FAILURE") {
+          color = "#FF0000"
+        } else {
+          color = "#FFFF00"
         }
+
+        def message = """
+          *Job:* ${env.JOB_NAME}
+          *Build:* <${env.BUILD_URL}|${env.BUILD_NUMBER}>
+          *Status:* ${status}
+          *Branch:* ${env.BRANCH_NAME}
+          *Commit:* <${env.CHANGE_URL}|${env.CHANGE_ID}>
+          *Author:* ${env.CHANGE_AUTHOR}
+          *Message:* ${env.CHANGE_TITLE}
+          *Duration:* ${currentBuild.durationString}
+        """
+
+        slackSend (color: color, message: message, tokenCredentialId: 'slackcred')
       }
     }
   }
