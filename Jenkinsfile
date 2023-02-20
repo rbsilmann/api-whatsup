@@ -80,7 +80,7 @@ pipeline {
             *Message:* ${env.CHANGE_TITLE}
             *Duration:* ${currentBuild.durationString}
           """
-          slackSend (color: color, message: message, tokenCredentialId: 'slackcred', channel: '#jenkins-qa')
+          slackSend (color: color, message: message, tokenCredentialId: 'slackcred', channel: '#jenkins-qa', baseUrl: 'https://slack.com/api/')
         }
       }
     }
