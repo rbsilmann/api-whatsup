@@ -52,37 +52,37 @@ pipeline {
         }
       }
     }
-  }
-  stage('Notify Slack') {
-    when {
-      expression {
-        return env.BRANCH_NAME.startsWith('main') || env.BRANCH_NAME.startsWith('FIS')
-      }
-    }
-    steps {
-      script {
-        def color = ""
-        def status = currentBuild.currentResult
-        if (status == "SUCCESS") {
-          color = "#36a64f"
-        } else if (status == "FAILURE") {
-          color = "#FF0000"
-        } else {
-          color = "#FFFF00"
+    stage('Notify Slack') {
+      when {
+        expression {
+          return env.BRANCH_NAME.startsWith('main') || env.BRANCH_NAME.startsWith('FIS')
         }
-
-        def message = """
-          *Job:* ${env.JOB_NAME}
-          *Build:* <${env.BUILD_URL}|${env.BUILD_NUMBER}>
-          *Status:* ${status}
-          *Branch:* ${env.BRANCH_NAME}
-          *Commit:* <${env.CHANGE_URL}|${env.CHANGE_ID}>
-          *Author:* ${env.CHANGE_AUTHOR}
-          *Message:* ${env.CHANGE_TITLE}
-          *Duration:* ${currentBuild.durationString}
-        """
-
-        slackSend (color: color, message: message, tokenCredentialId: 'slackcred')
+      }
+      steps {
+        script {
+          def color = ""
+          def status = currentBuild.currentResult
+          if (status == "SUCCESS") {
+            color = "#36a64f"
+          } else if (status == "FAILURE") {
+            color = "#FF0000"
+          } else {
+            color = "#FFFF00"
+          }
+  
+          def message = """
+            *Job:* ${env.JOB_NAME}
+            *Build:* <${env.BUILD_URL}|${env.BUILD_NUMBER}>
+            *Status:* ${status}
+            *Branch:* ${env.BRANCH_NAME}
+            *Commit:* <${env.CHANGE_URL}|${env.CHANGE_ID}>
+            *Author:* ${env.CHANGE_AUTHOR}
+            *Message:* ${env.CHANGE_TITLE}
+            *Duration:* ${currentBuild.durationString}
+          """
+  
+          slackSend (color: color, message: message, tokenCredentialId: 'slackcred')
+        }
       }
     }
   }
