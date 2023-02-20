@@ -53,4 +53,17 @@ pipeline {
       }
     }
   }
+  post {
+    always {
+      script {
+        def slackChannel = '#alertmanager'
+        def slackToken = 'xoxe.xoxp-1-Mi0yLTQzOTQ5MTIzNTAzNzAtNDM5NDgwODM4NjExNS00ODMwMDA5OTUxMzYzLTQ4MjcxODk1NTc4MTMtMzQyMTYzMGJiZjA2MDg3MWFkOTFkMWNhNGRiZGVmMjc1MDY4YmYwZTIxYWUyMzhkNzEwNGU2MTI1ZWNkZmE0NA'
+        def slackUrl = "https://slack.com/api/chat.postMessage?token=${slackToken}&channel=${slackChannel}&text="
+        
+        if (env.SLACK_NOTIFY == 'true') {
+          sh "curl -X POST '${slackUrl}Pipeline completed for *${env.JOB_NAME}* branch *${env.BRANCH_NAME}* with status *${currentBuild.result}*'"
+        }
+      }
+    }
+  }
 }
