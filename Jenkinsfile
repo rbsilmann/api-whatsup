@@ -17,6 +17,28 @@ pipeline {
                 sh 'docker build -t rbsilmann/api-whatsup:$BRANCH .'
             }
         }
+        stage('Test') {
+            when {
+                expression {
+                    return env.BRANCH_NAME.startsWith('fis') || env.BRANCH_NAME.startsWith('FIS')
+                }
+            }
+            steps {
+                script {
+                    def containerId = sh(script: 'docker run -d -p 9098:9098 rbsilmann/api-whatsup:$BRANCH', returnStdout: true).trim()
+                    try {
+                        def response = sh(script: 'curl -I -s -o /dev/null -w "%{http_code}" http://localhost:9098', returnStdout: true).trim()
+                        if (response == '200') {
+                            echo 'Test passed!'
+                        } else {
+                            error 'Test failed!'
+                        }
+                    } finally {
+                        sh "docker stop ${containerId}"
+                    }
+                }
+            }
+        }
         stage('Push Docker Image') {
             when {
                 expression {
