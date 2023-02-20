@@ -71,7 +71,8 @@ pipeline {
             color = "#FFFF00"
           }
           def message = """
-              *Job:* ${env.JOB_NAME}
+            
+            *Job:* ${env.JOB_NAME}
             *Build:* <${env.BUILD_URL}|${env.BUILD_NUMBER}>
             *Status:* ${status}
             *Branch:* ${env.BRANCH_NAME}  
