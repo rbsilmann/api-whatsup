@@ -74,10 +74,7 @@ pipeline {
             *Job:* ${env.JOB_NAME}
             *Build:* <${env.BUILD_URL}|${env.BUILD_NUMBER}>
             *Status:* ${status}
-            *Branch:* ${env.BRANCH_NAME}
-            *Commit:* <${env.CHANGE_URL}|${env.CHANGE_ID}>
-            *Author:* ${env.CHANGE_AUTHOR}
-            *Message:* ${env.CHANGE_TITLE}
+            *Branch:* ${env.BRANCH_NAME}  
             *Duration:* ${currentBuild.durationString}
           """
           slackSend (color: color, message: message, tokenCredentialId: 'slackcred', channel: '#jenkins-qa', baseUrl: 'https://slack.com/api/', botUser: true)
