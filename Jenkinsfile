@@ -7,36 +7,28 @@ pipeline {
     buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
   }
   stages {
-    stage('Hello') {
-      steps {
-        sh '''
-          echo $BRANCH
-        '''
-      }
-    }
-    stage('Build image') {
-      when {
-        branch "main"
-        // branch "fix-*"
-      }
-      steps {
-        script {
-          app = docker.build("rbsilmann/api-whatsup:${BRANCH}")
+        stage('Build Docker Image') {
+            when {
+                expression {
+                    return env.BRANCH_NAME.startsWith('main') || env.BRANCH_NAME.startsWith('FIS')
+                }
+            }
+            steps {
+                sh 'docker build -t rbsilmann/api-whatsup:$BRANCH .'
+            }
         }
-      }
-    }
-    // stage('Push image') {
-    //   when {
-    //     branch "main"
-    //     // branch "fix-*"
-    //   }
-    //   steps {
-    //     script {
-    //       docker.withRegistry('https://registry-1.docker.io', 'regcred') {
-    //         app.push()
-    //       }
-    //     }
-    //   }
-    // }
+        stage('Push Docker Image') {
+            when {
+                expression {
+                    return env.BRANCH_NAME.startsWith('main') || env.BRANCH_NAME.startsWith('FIS')
+                }
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'regcred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh 'docker login -u $USERNAME -p $PASSWORD rbsilmann'
+                    sh 'docker push rbsilmann/api-whatsup:$BRANCH'
+                }
+            }
+        }
   }
 }
