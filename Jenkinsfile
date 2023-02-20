@@ -1,5 +1,8 @@
 pipeline {
   agent any
+  environment {
+    BRANCH = "${env.GIT_BRANCH}"
+  }
   options {
     buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
   }
@@ -11,7 +14,7 @@ pipeline {
         }
       }
       steps {
-        sh 'docker build -t rbsilmann/api-whatsup:${env.BRANCH_NAME} .'
+        sh 'docker build -t rbsilmann/api-whatsup:$BRANCH .'
       }
     }
     stage('Test') {
@@ -22,7 +25,7 @@ pipeline {
       }
       steps {
         script {
-          def containerId = sh(script: 'docker run -d -p 9098:9098 rbsilmann/api-whatsup:${env.BRANCH_NAME}', returnStdout: true).trim()
+          def containerId = sh(script: 'docker run -d -p 9098:9098 rbsilmann/api-whatsup:$BRANCH', returnStdout: true).trim()
           try {
             def status = sh(script: "docker inspect -f '{{.State.Status}}' ${containerId}", returnStatus: true)
             if (status == 0) {
@@ -45,7 +48,7 @@ pipeline {
       steps {
         withCredentials([usernamePassword(credentialsId: 'regcred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
           sh 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
-          sh 'docker push rbsilmann/api-whatsup:${env.BRANCH_NAME}'
+          sh 'docker push rbsilmann/api-whatsup:$BRANCH'
         }
       }
     }
