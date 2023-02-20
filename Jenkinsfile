@@ -25,7 +25,7 @@ pipeline {
             }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'regcred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh 'docker login -u $USERNAME -p $PASSWORD rbsilmann'
+                    sh 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
                     sh 'docker push rbsilmann/api-whatsup:$BRANCH'
                 }
             }
