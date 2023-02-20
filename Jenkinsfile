@@ -20,7 +20,7 @@ pipeline {
         stage('Test') {
             when {
                 expression {
-                    return env.BRANCH_NAME.startsWith('fis') || env.BRANCH_NAME.startsWith('FIS')
+                    return env.BRANCH_NAME.startsWith('main') || env.BRANCH_NAME.startsWith('FIS')
                 }
             }
             steps {
