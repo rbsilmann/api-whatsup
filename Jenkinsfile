@@ -69,7 +69,6 @@ pipeline {
           } else {
             color = "#FFFF00"
           }
-  
           def message = """
             *Job:* ${env.JOB_NAME}
             *Build:* <${env.BUILD_URL}|${env.BUILD_NUMBER}>
@@ -80,8 +79,9 @@ pipeline {
             *Message:* ${env.CHANGE_TITLE}
             *Duration:* ${currentBuild.durationString}
           """
-  
-          slackSend (color: color, message: message, tokenCredentialId: 'slackcred')
+          withCredentials([string(credentialsId: 'slackcred', variable: 'SLACK_TOKEN')]) {
+            slackSend (color: color, message: message, tokenCredentialId: 'slackcred')
+          }
         }
       }
     }
