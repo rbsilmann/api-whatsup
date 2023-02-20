@@ -2,6 +2,7 @@ pipeline {
   agent any
   environment {
     BRANCH = "${env.GIT_BRANCH}"
+    SLACK_TOKEN = credentials('slackcred')
   }
   options {
     buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
@@ -79,9 +80,7 @@ pipeline {
             *Message:* ${env.CHANGE_TITLE}
             *Duration:* ${currentBuild.durationString}
           """
-          withCredentials([string(credentialsId: 'slackcred', variable: 'SLACK_TOKEN')]) {
-            slackSend (color: color, message: message, tokenCredentialId: 'slackcred')
-          }
+          slackSend (color: color, message: message, tokenCredentialId: 'slackcred')
         }
       }
     }
